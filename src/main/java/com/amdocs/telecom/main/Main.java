@@ -1,22 +1,46 @@
 package com.amdocs.telecom.main;
 
+import com.amdocs.telecom.controller.MainMenu;
+import com.amdocs.telecom.controller.SessionMenu;
+import com.amdocs.telecom.dao.AdministratorDAO;
+import com.amdocs.telecom.dao.CustomerDAO;
+import com.amdocs.telecom.dao.LoginHistoryDAO;
+import com.amdocs.telecom.dao.OtpDAO;
+import com.amdocs.telecom.dao.impl.AdministratorDAOImpl;
+import com.amdocs.telecom.dao.impl.CustomerDAOImpl;
+import com.amdocs.telecom.dao.impl.LoginHistoryDAOImpl;
+import com.amdocs.telecom.dao.impl.OtpDAOImpl;
+import com.amdocs.telecom.service.AuthenticationService;
+import com.amdocs.telecom.service.CustomerService;
+import com.amdocs.telecom.service.impl.AuthenticationServiceImpl;
+import com.amdocs.telecom.service.impl.CustomerServiceImpl;
 import com.amdocs.telecom.util.DBConnection;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class Main {
+
     public static void main(String[] args) {
-        System.out.println("TCSMS booting up...");
-        try (Connection con = DBConnection.getInstance().getConnection();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM telecom_plan")) {
-            rs.next();
-            System.out.println("Connected! Plans in DB: " + rs.getInt(1));
+        try (Connection con = DBConnection.getInstance().getConnection()) {
+            if (!con.isValid(2)) {
+                System.out.println("Database connection is not valid.");
+                return;
+            }
         } catch (SQLException e) {
-            System.out.println("Connection failed: " + e.getMessage());
+            System.out.println("Cannot connect to the database: " + e.getMessage());
+            return;
         }
+
+        CustomerDAO customerDao = new CustomerDAOImpl();
+        AdministratorDAO adminDao = new AdministratorDAOImpl();
+        LoginHistoryDAO historyDao = new LoginHistoryDAOImpl();
+        OtpDAO otpDao = new OtpDAOImpl();
+
+        AuthenticationService authService =
+                new AuthenticationServiceImpl(customerDao, adminDao, historyDao, otpDao);
+        CustomerService customerService = new CustomerServiceImpl(customerDao);
+
+        new MainMenu(authService, customerService, new SessionMenu(authService, historyDao)).start();
     }
 }
