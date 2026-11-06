@@ -49,4 +49,5 @@ public class Administrator extends User {
 
     @Override
     public String getRoleName() { return role == null ? "ADMIN" : role.name(); }
+
 }

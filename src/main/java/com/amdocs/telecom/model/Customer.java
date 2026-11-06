@@ -116,4 +116,5 @@ public class Customer extends User {
     public String getRoleName() { return "CUSTOMER"; }
 
     public String getFullName() { return firstName + " " + lastName; }
+
 }
