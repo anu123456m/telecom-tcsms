@@ -16,10 +16,12 @@ public class SessionMenu {
 
     private final AuthenticationService authService;
     private final LoginHistoryDAO historyDao;
+    private final PlanMenu planMenu;
 
-    public SessionMenu(AuthenticationService authService, LoginHistoryDAO historyDao) {
+    public SessionMenu(AuthenticationService authService, LoginHistoryDAO historyDao, PlanMenu planMenu) {
         this.authService = authService;
         this.historyDao = historyDao;
+        this.planMenu = planMenu;
     }
 
     public void show(LoginSession session) {
@@ -30,14 +32,18 @@ public class SessionMenu {
 
         boolean active = true;
         while (active) {
-            System.out.println("\n1. View my login history");
-            System.out.println("2. Logout");
+            System.out.println("\n1. Browse and compare plans");
+            System.out.println("2. View my login history");
+            System.out.println("3. Logout");
             int choice = InputHelper.readInt("Enter choice: ");
             switch (choice) {
                 case 1:
-                    showHistory(session);
+                    planMenu.show();
                     break;
                 case 2:
+                    showHistory(session);
+                    break;
+                case 3:
                     authService.logout(session);
                     System.out.println("Logged out. See you soon!");
                     active = false;
