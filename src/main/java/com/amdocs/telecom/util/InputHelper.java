@@ -1,6 +1,5 @@
 package com.amdocs.telecom.util;
 
-import java.io.Console;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
@@ -19,7 +18,7 @@ public final class InputHelper {
 
     /** Masked input when run from a real terminal; visible inside the IntelliJ Run window. */
     public static String readPassword(String prompt) {
-        Console console = System.console();
+        java.io.Console console = System.console();
         if (console != null) {
             char[] chars = console.readPassword(prompt);
             return chars == null ? "" : new String(chars);
@@ -34,6 +33,17 @@ public final class InputHelper {
                 return Integer.parseInt(text);
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a number.");
+            }
+        }
+    }
+
+    public static double readDouble(String prompt) {
+        while (true) {
+            String text = readLine(prompt);
+            try {
+                return Double.parseDouble(text);
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
             }
         }
     }

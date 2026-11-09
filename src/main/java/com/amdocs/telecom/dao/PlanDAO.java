@@ -9,5 +9,4 @@ public interface PlanDAO {
     List<TelecomPlan> findAll();
     Optional<TelecomPlan> findByCode(String planCode);
     Optional<TelecomPlan> findById(int planId);
-
 }
