@@ -10,4 +10,25 @@ public class SubscriptionHistory extends BaseEntity {
     private LocalDateTime changeDate;
     private String changeReason;
     private String changedBy;
+    private String oldPlanName;
+    private String newPlanName;
+
+    public long getHistoryId() { return historyId; }
+    public void setHistoryId(long historyId) { this.historyId = historyId; }
+    public int getSubscriptionId() { return subscriptionId; }
+    public void setSubscriptionId(int subscriptionId) { this.subscriptionId = subscriptionId; }
+    public Integer getOldPlanId() { return oldPlanId; }
+    public void setOldPlanId(Integer oldPlanId) { this.oldPlanId = oldPlanId; }
+    public int getNewPlanId() { return newPlanId; }
+    public void setNewPlanId(int newPlanId) { this.newPlanId = newPlanId; }
+    public LocalDateTime getChangeDate() { return changeDate; }
+    public void setChangeDate(LocalDateTime changeDate) { this.changeDate = changeDate; }
+    public String getChangeReason() { return changeReason; }
+    public void setChangeReason(String changeReason) { this.changeReason = changeReason; }
+    public String getChangedBy() { return changedBy; }
+    public void setChangedBy(String changedBy) { this.changedBy = changedBy; }
+    public String getOldPlanName() { return oldPlanName; }
+    public void setOldPlanName(String oldPlanName) { this.oldPlanName = oldPlanName; }
+    public String getNewPlanName() { return newPlanName; }
+    public void setNewPlanName(String newPlanName) { this.newPlanName = newPlanName; }
 }

@@ -3,6 +3,7 @@ package com.amdocs.telecom.controller;
 import com.amdocs.telecom.dao.LoginHistoryDAO;
 import com.amdocs.telecom.dto.LoginSession;
 import com.amdocs.telecom.model.LoginHistory;
+import com.amdocs.telecom.model.UserType;
 import com.amdocs.telecom.service.AuthenticationService;
 import com.amdocs.telecom.util.InputHelper;
 
@@ -17,11 +18,14 @@ public class SessionMenu {
     private final AuthenticationService authService;
     private final LoginHistoryDAO historyDao;
     private final PlanMenu planMenu;
+    private final SubscriptionMenu subscriptionMenu;
 
-    public SessionMenu(AuthenticationService authService, LoginHistoryDAO historyDao, PlanMenu planMenu) {
+    public SessionMenu(AuthenticationService authService, LoginHistoryDAO historyDao,
+                       PlanMenu planMenu, SubscriptionMenu subscriptionMenu) {
         this.authService = authService;
         this.historyDao = historyDao;
         this.planMenu = planMenu;
+        this.subscriptionMenu = subscriptionMenu;
     }
 
     public void show(LoginSession session) {
@@ -33,17 +37,25 @@ public class SessionMenu {
         boolean active = true;
         while (active) {
             System.out.println("\n1. Browse and compare plans");
-            System.out.println("2. View my login history");
-            System.out.println("3. Logout");
+            System.out.println("2. My subscriptions");
+            System.out.println("3. View my login history");
+            System.out.println("4. Logout");
             int choice = InputHelper.readInt("Enter choice: ");
             switch (choice) {
                 case 1:
                     planMenu.show();
                     break;
                 case 2:
-                    showHistory(session);
+                    if (session.getUserType() == UserType.CUSTOMER) {
+                        subscriptionMenu.show(session);
+                    } else {
+                        System.out.println("Subscriptions are available to customers only.");
+                    }
                     break;
                 case 3:
+                    showHistory(session);
+                    break;
+                case 4:
                     authService.logout(session);
                     System.out.println("Logged out. See you soon!");
                     active = false;
