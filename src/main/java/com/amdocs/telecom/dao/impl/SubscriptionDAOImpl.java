@@ -93,6 +93,22 @@ public class SubscriptionDAOImpl implements SubscriptionDAO {
     }
 
     @Override
+    public List<MobileSubscription> findAllActive() {
+        String sql = SELECT_JOINED + "WHERE ms.status = 'ACTIVE' ORDER BY ms.subscription_id";
+        List<MobileSubscription> list = new ArrayList<>();
+        try (Connection con = DBConnection.getInstance().getConnection();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new DatabaseException("Could not read subscriptions", e);
+        }
+        return list;
+    }
+
+    @Override
     public boolean hasLiveSubscriptionToPlan(int customerId, int planId) {
         String sql = "SELECT 1 FROM mobile_subscription WHERE customer_id = ? AND plan_id = ? "
                 + "AND status <> 'TERMINATED' LIMIT 1";

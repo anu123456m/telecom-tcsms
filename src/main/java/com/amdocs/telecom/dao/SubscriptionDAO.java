@@ -12,6 +12,7 @@ public interface SubscriptionDAO {
     int insert(Connection con, MobileSubscription s);
     Optional<MobileSubscription> findById(int subscriptionId);
     List<MobileSubscription> findByCustomer(int customerId);
+    List<MobileSubscription> findAllActive();
     boolean hasLiveSubscriptionToPlan(int customerId, int planId);
     void updatePlan(Connection con, int subscriptionId, int planId, PlanType type);
 }

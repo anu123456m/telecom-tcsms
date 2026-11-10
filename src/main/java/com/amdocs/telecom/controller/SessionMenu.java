@@ -19,16 +19,23 @@ public class SessionMenu {
     private final LoginHistoryDAO historyDao;
     private final PlanMenu planMenu;
     private final SubscriptionMenu subscriptionMenu;
+    private final UsageBillingMenu usageBillingMenu;
+    private final PaymentMenu paymentMenu;
 
-    public SessionMenu(AuthenticationService authService, LoginHistoryDAO historyDao,
-                       PlanMenu planMenu, SubscriptionMenu subscriptionMenu) {
+    public SessionMenu(AuthenticationService authService, LoginHistoryDAO historyDao, PlanMenu planMenu,
+                       SubscriptionMenu subscriptionMenu, UsageBillingMenu usageBillingMenu,
+                       PaymentMenu paymentMenu) {
         this.authService = authService;
         this.historyDao = historyDao;
         this.planMenu = planMenu;
         this.subscriptionMenu = subscriptionMenu;
+        this.usageBillingMenu = usageBillingMenu;
+        this.paymentMenu = paymentMenu;
     }
 
     public void show(LoginSession session) {
+        boolean admin = session.getUserType() == UserType.ADMIN;
+
         System.out.println("\n====================================================");
         System.out.println(" Welcome, " + session.getDisplayName() + "  [" + session.getRole() + "]");
         System.out.println(" Last login: " + formatPrevious(session.getPreviousLogin()));
@@ -38,24 +45,40 @@ public class SessionMenu {
         while (active) {
             System.out.println("\n1. Browse and compare plans");
             System.out.println("2. My subscriptions");
-            System.out.println("3. View my login history");
-            System.out.println("4. Logout");
+            System.out.println("3. " + (admin ? "Admin: usage and billing tools" : "My usage and bills"));
+            System.out.println("4. " + (admin ? "Admin: view all payments" : "Payments"));
+            System.out.println("5. View my login history");
+            System.out.println("6. Logout");
             int choice = InputHelper.readInt("Enter choice: ");
             switch (choice) {
                 case 1:
                     planMenu.show();
                     break;
                 case 2:
-                    if (session.getUserType() == UserType.CUSTOMER) {
-                        subscriptionMenu.show(session);
-                    } else {
+                    if (admin) {
                         System.out.println("Subscriptions are available to customers only.");
+                    } else {
+                        subscriptionMenu.show(session);
                     }
                     break;
                 case 3:
-                    showHistory(session);
+                    if (admin) {
+                        usageBillingMenu.showAdmin();
+                    } else {
+                        usageBillingMenu.showCustomer(session);
+                    }
                     break;
                 case 4:
+                    if (admin) {
+                        paymentMenu.showAdmin();
+                    } else {
+                        paymentMenu.showCustomer(session);
+                    }
+                    break;
+                case 5:
+                    showHistory(session);
+                    break;
+                case 6:
                     authService.logout(session);
                     System.out.println("Logged out. See you soon!");
                     active = false;
